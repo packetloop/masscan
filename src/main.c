@@ -252,6 +252,29 @@ typedef struct Bucket {
   uint32_t histgram[16384 * 1024];
 } Bucket;
 
+unsigned int reverseBits(unsigned int num) 
+{ 
+    unsigned int  NO_OF_BITS = sizeof(num) * 8; 
+    unsigned int reverse_num = 0; 
+    int i; 
+    for (i = 0; i < NO_OF_BITS; i++) 
+    { 
+        if((num & (1 << i))) 
+           reverse_num |= 1 << ((NO_OF_BITS - 1) - i);   
+   } 
+    return reverse_num; 
+}
+
+uint32_t
+rev(uint32_t num)
+{
+    uint8_t a = ((num & 0xff) * 0x0202020202ULL & 0x010884422010ULL) % 1023;
+    uint8_t b = (((num >> 8 ) & 0xff) * 0x0202020202ULL & 0x010884422010ULL) % 1023;
+    uint8_t c = (((num >> 16) & 0xff) * 0x0202020202ULL & 0x010884422010ULL) % 1023;
+    uint8_t d = (((num >> 24) & 0xff) * 0x0202020202ULL & 0x010884422010ULL) % 1023;
+    return (a << 24) | (b << 16) | (c << 8) | d;
+}
+
 /***************************************************************************
  * This thread spews packets as fast as it can
  *
@@ -389,7 +412,8 @@ infinite:
                 while (xXx >= range)
                     xXx -= range;
             xXx = blackrock_shuffle(&blackrock,  xXx);
-            ip_them = rangelist_pick(&masscan->targets, xXx % count_ips);
+            ip_them = ntohl(rangelist_pick(&masscan->targets, xXx % count_ips));
+            // ip_them = rev(rangelist_pick(&masscan->targets, xXx % count_ips));
             port_them = rangelist_pick(&masscan->ports, xXx / count_ips);
 
             /*
@@ -442,7 +466,7 @@ infinite:
               buckets[index].curSeq = i;
               buckets[index].histgram[buckets[index].curSeq - buckets[index].preSeq]++;
               if (index == 0) {
-                fprintf(stderr, "%u\n", buckets[index].curSeq - buckets[index].preSeq);
+                printf("ip delta = %u, time delta = %u\n", abs(ip_them - buckets[index].preIp), buckets[index].curSeq - buckets[index].preSeq);
               }
             }
 
@@ -461,7 +485,7 @@ infinite:
             }
 
             if (i >= end) {
-              is_tx_done = 1;
+              is_tx_done++;
             }
 
         } /* end of batch */
