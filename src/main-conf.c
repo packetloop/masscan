@@ -488,7 +488,6 @@ ranges_from_bitmap(struct RangeList *ranges, const char *filename)
     /* Target list must be sorted every time it's been changed,
      * before it can be used */
     rangelist_sort(ranges);
-    printf("ranges length = %llu\n", rangelist_count(ranges));
 }
 
 
@@ -1915,6 +1914,11 @@ masscan_set_parameter(struct Masscan *masscan,
         if (strlen(value) > 4 && !strncmp(&value[strlen(value) - 4], ".bmp", 4)) {
           printf("Input from bitmap: %s\n", value);
           ranges_from_bitmap(&masscan->targets, value);
+          printf("ranges length = %llu\n", rangelist_count(&masscan->targets));
+        } else if (strlen(value) > 4 && !strncmp(&value[strlen(value) - 4], ".txt", 4)) {
+          printf("Input from txt: %s\n", value);
+          ranges_from_file(&masscan->targets, value);
+          printf("ranges length = %llu\n", rangelist_count(&masscan->targets));
         } else {
           const char *ranges = value;
           unsigned offset = 0;
