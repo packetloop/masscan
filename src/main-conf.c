@@ -454,8 +454,7 @@ ranges_from_bitmap(struct RangeList *ranges, const char *filename)
 
     struct Range range;
     uint64_t prev = ULLONG_MAX;
-    uint64_t ip = 0;
-    while (ip < 0x100000000ULL) {
+    for (uint64_t ip = 0; ip < 0x100000000ULL; ip++) {
       uint64_t idx = ip / 64;
       uint64_t isSet = (1ULL << (ip % 64)) & ((uint64_t*)addr)[idx];
       if (isSet) {
@@ -472,7 +471,6 @@ ranges_from_bitmap(struct RangeList *ranges, const char *filename)
         }
         prev = ip;
       }
-      ip++;
     }
     // Add the last one
     if (prev != ULLONG_MAX) {
