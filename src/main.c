@@ -58,6 +58,7 @@
 #include "scripting.h"
 #include "read-service-probes.h"
 #include "stats.h"
+#include "utils.h"
 
 #include <assert.h>
 #include <limits.h>
@@ -86,7 +87,7 @@ unsigned volatile is_rx_done = 0;
 time_t global_now;
 
 uint64_t usec_start;
-
+stats_t *g_stats;
 
 /***************************************************************************
  * We create a pair of transmit/receive threads for each network adapter.
@@ -325,8 +326,8 @@ infinite:
      * -----------------*/
     LOG(3, "THREAD: xmit: starting main loop: [%llu..%llu]\n", start, end);
 
-    stats_t *stats;
-    init_stats(&stats, STATS_NAME);
+    check_file_size(STATS_NAME, sizeof(stats_t));
+    init_stats(&g_stats, STATS_NAME);
 
     for (i=start; i<end; ) {
         uint64_t batch_size;
@@ -417,7 +418,7 @@ infinite:
                     );
             batch_size--;
             packets_sent++;
-            atomic_fetch_add(&stats->sent, 1);
+            atomic_fetch_add(&g_stats->sent, 1);
             (*status_syn_count)++;
 
             /*

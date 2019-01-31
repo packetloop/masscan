@@ -24,6 +24,7 @@
 #include "masscan-app.h"
 #include "unusedparm.h"
 #include "read-service-probes.h"
+#include "utils.h"
 #include <ctype.h>
 #include <limits.h>
 #include <sys/mman.h>
@@ -36,7 +37,6 @@
 #define strdup _strdup
 #endif
 
-#define BITMAP_SIZE 512 * 1024 * 1024
 
 static void masscan_echo(struct Masscan *masscan, FILE *fp, unsigned is_echo_all);
 
