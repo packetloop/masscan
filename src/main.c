@@ -748,7 +748,10 @@ receive_thread(void *v)
         }
 
         if (length > 1514)
+        {
+            LOG(1, "THREAD: recv: unexpected packet length: %d\n", length);
             continue;
+        }
 
         /*
          * "Preprocess" the response packet. This means to go through and
@@ -757,7 +760,10 @@ receive_thread(void *v)
          */
         x = preprocess_frame(px, length, data_link, &parsed);
         if (!x)
+        {
+            LOG(1, "THREAD: recv: preprocess_frame corrupt packet\n");
             continue; /* corrupt packet */
+        }
         ip_me = parsed.ip_dst[0]<<24 | parsed.ip_dst[1]<<16
             | parsed.ip_dst[2]<< 8 | parsed.ip_dst[3]<<0;
         ip_them = parsed.ip_src[0]<<24 | parsed.ip_src[1]<<16
@@ -778,7 +784,10 @@ receive_thread(void *v)
 
         /* verify: my IP address */
         if (!is_my_ip(&parms->src, ip_me))
+        {
+            LOG(1, "THREAD: recv: received packet not my ip: 0x%x\n", ip_me);
             continue;
+        }
 
         /*
          * Handle non-TCP protocols
@@ -837,13 +846,17 @@ receive_thread(void *v)
                 /* fall down to below */
                 break;
             default:
+                LOG(1, "THREAD: recv: unexpected parsed.found = %d\n", parsed.found);
                 continue;
         }
 
 
         /* verify: my port number */
         if (!is_my_port(&parms->src, port_me))
+        {
+            LOG(1, "THREAD: recv: not my port: %d\n", port_me);
             continue;
+        }
         if (parms->masscan->nmap.packet_trace)
             packet_trace(stdout, parms->pt_start, px, length, 0);
 
