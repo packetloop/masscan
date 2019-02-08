@@ -547,6 +547,7 @@ receive_thread(void *v)
     uint64_t *status_synack_count;
     uint64_t *status_tcb_count;
     uint64_t entropy = masscan->seed;
+    uint64_t packets_recved = 0;
 
     /* some status variables */
     status_synack_count = (uint64_t*)malloc(sizeof(uint64_t));
@@ -736,6 +737,7 @@ receive_thread(void *v)
                 tcpcon_timeouts(tcpcon, (unsigned)time(0), 0);
             continue;
         }
+        packets_recved++;
         
 
         /*
@@ -1012,7 +1014,7 @@ receive_thread(void *v)
     }
 
 
-    LOG(1, "THREAD: recv: stopping thread #%u\n", parms->nic_index);
+    LOG(1, "THREAD: recv: stopping thread #%u, packets_recved %llu\n", parms->nic_index, packets_recved);
     
     /*
      * cleanup
