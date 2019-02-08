@@ -787,9 +787,22 @@ receive_thread(void *v)
         /* verify: my IP address */
         if (!is_my_ip(&parms->src, ip_me))
         {
-            LOG(1, "THREAD: recv: received packet not my ip: 0x%x\n", ip_me);
+            // LOG(1, "THREAD: recv: received packet not my ip: 0x%x\n", ip_me);
             continue;
         }
+
+        LOG(1, "THREAD: recv: received packet my ip: 0x%x\n"
+               "parsed.found: %d\n"
+               "parsed.protocol: %u\n"
+               "parsed.port_src: %u\n"
+               "parsed.port_dst: %u\n"
+               "parsed.port_dst: %u\n"
+            , ip_me
+            , parsed.found
+            , parsed.ip_protocol
+            , parsed.port_src
+            , parsed.port_dst
+            );
 
         /*
          * Handle non-TCP protocols
