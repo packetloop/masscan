@@ -796,7 +796,6 @@ receive_thread(void *v)
                "parsed.protocol: %u\n"
                "parsed.port_src: %u\n"
                "parsed.port_dst: %u\n"
-               "parsed.port_dst: %u\n"
             , ip_me
             , parsed.found
             , parsed.ip_protocol
