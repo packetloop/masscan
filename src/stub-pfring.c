@@ -65,7 +65,7 @@ PFRING_init(void)
     int err = 0;
     LOG(6, "pfring: initializing subsystem\n");
     LOG(6, "pfring: looking for 'libpfring.so'\n");
-    h = dlopen("libpfring.so", RTLD_LAZY);
+    h = dlopen("libpfring.so.1", RTLD_LAZY);
     if (h == NULL) {
         LOG(2, "pfring: error: dlopen('libpfring.so'): %s\n", strerror_x(errno));
         return 0;
